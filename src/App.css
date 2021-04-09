@@ -8,7 +8,7 @@
   border-radius: 1rem;
   display: inline-block;
 	-webkit-border-radius: 1rem;
-  background-color: var(--bg-primary);
+  background-color: #F0F2F5;
 }
 
 .comment-bubble > p {

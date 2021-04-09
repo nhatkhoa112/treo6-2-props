@@ -30,7 +30,6 @@ const Avatar = (props) => {
   );
 };
 
-
 const PostForm = () => {
   return (
     <Form inline className="d-flex align-items-center">
@@ -76,7 +75,7 @@ const Comment = ({ body, user }) => {
 const Comments = (props) => {
   return (
     <Card.Body>
-      <ListGroup className="list-group-flush">
+      <ListGroup className="list-group-flush py-3">
         {props.comments.map((c) => (
           <Comment key={c.id} {...c} />
         ))}
