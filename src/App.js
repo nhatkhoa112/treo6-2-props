@@ -30,6 +30,23 @@ const Avatar = (props) => {
   );
 };
 
+
+const PostForm = () => {
+  return (
+    <Form inline className="d-flex align-items-center">
+      <Form.Control
+        type="text"
+        className="mr-3"
+        style={{width: '90%'}}
+        placeholder="What's on your mind?"
+      />
+      <Button variant="primary" type="submit">
+        Post!
+      </Button>
+    </Form>
+  );
+}
+
 const CommentForm = () => {
   return (
     <Form inline>
@@ -67,7 +84,6 @@ const Comments = (props) => {
     </Card.Body>
   );
 };
-
 
 const Post = (props) => {
   return (
@@ -114,18 +130,30 @@ const Navbarr = (props) => {
 
 
 const Friends = () => {
-  return <div>Friends</div>;
+  return (
+    <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
+      Friends
+    </div>
+  );
 }
 const Photos = () => {
-  return <div>Photos</div>;
+  return (
+    <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
+      Photos
+    </div>
+  );
 }
 
 const Hobbies = () => {
-  return <div>Hobbies</div>;
+  return (
+    <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
+      Hobbies
+    </div>
+  );
 };
 const Intro = () => {
   return (
-    <div className="d-flex flex-column h-25 border w-100 align-items-center justify-content-center">
+    <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
       Introduction
       <button className="w-25">Edit Details</button>
     </div>
@@ -153,7 +181,12 @@ const Right = () => {
 
 const Main = () => {
   return (
-    <Container className="border d-flex align-items-center justify-content-center pt-5 mt-5">
+    <Container className="border pt-5 mt-5">
+      <Row className="mb-5">
+        <Col>
+          <PostForm />
+        </Col>
+      </Row>
       <Row>
         <Left />
         <Right />
