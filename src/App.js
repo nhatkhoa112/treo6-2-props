@@ -17,6 +17,9 @@ import "./App.css";
 
 import { COMMENTS } from './utils'
 
+import Modal from "react-modal";
+
+
 const Avatar = (props) => {
   return (
     <img
@@ -30,26 +33,41 @@ const Avatar = (props) => {
   );
 };
 
-const PostForm = () => {
+const PostForm = ({posts, setPosts, currentUser}) => {
+  const [searchTerm, setSearchTerm] =useState('');
+  const handleOnClick = (e) => {
+    if(currentUser.email !== ""){
+      e.preventDefault();
+      setPosts([...posts, {
+        id: Math.random()*1000000000000,
+        text: searchTerm
+      }])
+    };
+    setSearchTerm("")
+  }
   return (
     <Form inline className="d-flex align-items-center">
       <Form.Control
         type="text"
         className="mr-3"
         style={{width: '90%'}}
-        placeholder="What's on your mind?"
+        placeholder={`What's on your mind ${currentUser.email}?`}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        value={searchTerm}
       />
-      <Button variant="primary" type="submit">
+      <Button onClick={handleOnClick} variant="primary" type="submit">
         Post!
       </Button>
     </Form>
   );
 }
 
-const CommentForm = () => {
+const CommentForm = (props) => {
   return (
     <Form inline>
-      <Form.Control type="text" placeholder="What's on your mind?" className="w-75 mr-3" />
+      <Form.Control type="text" 
+                    placeholder={`Whats on your mind ${props.currentUser.email}?`}
+                    className="w-75 mr-3" />
       <Button variant="primary" type="submit">
         Post!
       </Button>
@@ -85,20 +103,26 @@ const Comments = (props) => {
 };
 
 const Post = (props) => {
+  const {currentUser} =  props;
+  console.log(props.posts)
   return (
-    <Card style={{ width: "100%", padding: "1%" }}>
-      <Card.Title>PrimeTimeTran</Card.Title>
-      <p>
-        1. Make it so when we sign in the text inside the form says 'Whats on
-        your mind email'
-      </p>
-      <Card.Img
-        variant="top"
-        src="https://images.unsplash.com/photo-1534665482403-a909d0d97c67?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80"
-      />
-      <Card.Body>
+    <Card className="post-card" style={{ width: "100%", height: "100vh", padding: "1%" }}>
+      <div className="post-form">
+        <div className="user text-center">
+          <div><strong>{props.currentUser.email}</strong></div>
+        </div>
+        <div className="post-list">
+          <Card.Title>{props.posts.reverse().map(m=> <div className="post-items" key={m.id}>{m.text}</div>)}</Card.Title>
+        </div>
+        {/* <Card.Img
+          variant="top"
+          src="https://images.unsplash.com/photo-1534665482403-a909d0d97c67?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80"
+        /> */}
+      </div>
+
+      <Card.Body className="comment-form">
         <Comments comments={COMMENTS} />
-        <CommentForm />
+        <CommentForm currentUser={currentUser} />
       </Card.Body>
     </Card>
   );
@@ -115,12 +139,25 @@ const Navbarr = (props) => {
           <Nav.Link href="#home">Home</Nav.Link>
           <Nav.Link href="#link">Link</Nav.Link>
         </Nav>
-        <Form inline onSubmit={(e) => props.onSignIn(e, email)}>
-          <FormControl type="text" placeholder="Email" className="mr-sm-2" onChange={(e) => setEmail(e.target.value)} value={email}/>
-          <Button type="submit" variant="outline-success">
-            Sign In
-          </Button>
-        </Form>
+        {!props.currentUser.email ? (
+            <Form inline onSubmit={(e) => props.onSignIn(e, email)}>
+              <FormControl
+                type="text"
+                placeholder="Email"
+                className="mr-sm-2"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
+              <Button type="submit" variant="outline-success">
+                Sign In
+              </Button>
+            </Form>
+          ) : (
+            <Button onClick={props.onSignOut} type="submit" variant="outline-danger">
+              Sign Out {props.currentUser.email}
+            </Button>
+          )
+        }
       </Navbar.Collapse>
     </Navbar>
   );
@@ -150,45 +187,100 @@ const Hobbies = () => {
     </div>
   );
 };
-const Intro = () => {
+const Intro = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
       Introduction
-      <button className="w-25">Edit Details</button>
+      <button onClick={props.openModal} className="w-25">Edit Details</button>
     </div>
   );
 };
 
-const Left = () => {
+const Left = (props) => {
+
+  const [open, setOpen] = React.useState(false);
+  function openModal() {
+    if(props.currentUser.email !== ""){
+      setOpen(true);
+    }
+  }
+
+
+  function closeModal() {
+    setOpen(false);
+  }
+
+
   return (
     <Col className="d-flex flex-column align-items-center justify-content-center">
-      <Intro />
+      <Intro openModal={openModal} />
       <Hobbies />
       <Photos />
       <Friends />
+      <Modal
+        isOpen={open}
+        // style={customStyles}
+        onRequestClose={closeModal} 
+        contentLabel="Example Modal"
+      >
+        <div className="modal-card">
+          <h1 className="title text-center ">Edit Detail!</h1>
+          <div className="email-detail">
+            <form >
+              <h4>Email</h4>
+              <input type="text" className="input" onChange={props.updateEmail} />
+            </form>
+          </div>  
+          <div className="email-detail">
+            <form >
+              <h4>Hobbies</h4>
+              <textarea type="text" className="input"  />
+            </form>
+          </div>  
+          <div className="email-detail">
+            <form >
+              <h4>Photos_url</h4>
+              <input type="text" className="input"  />
+            </form>
+          </div>  
+          <div className="email-detail">
+          <form >
+            <h4>Friends</h4>
+            <textarea type="text" className="input"  />
+          </form>
+        </div>  
+        <div className="d-flex justify-content-center">
+          <button className="submit-btn" onClick={closeModal}>Submit</button>
+        </div>
+          
+        </div>
+      </Modal>
     </Col>
   );
 }
 
-const Right = () => {
+const Right = ({posts, currentUser}) => {
   return (
     <Col className="d-flex align-items-center justify-content-center">
-      <Post />
+      <Post posts={posts} currentUser={currentUser} />
     </Col>
   )
 }
 
-const Main = () => {
+const Main = (props) => {
+    const {currentUser} = props;
+    const [posts, setPosts] = useState([]);
+    console.log(posts)
   return (
     <Container className="border pt-5 mt-5">
       <Row className="mb-5">
         <Col>
-          <PostForm />
+          <PostForm posts={posts} setPosts={setPosts} currentUser={currentUser} />
         </Col>
       </Row>
       <Row>
-        <Left />
-        <Right />
+        <Left currentUser={currentUser} updateEmail={props.updateEmail} />
+        <Right posts={posts} currentUser={currentUser}  />
       </Row>
     </Container>
   );
@@ -197,14 +289,25 @@ const Main = () => {
 function App() {
   const [currentUser, setCurrentUser] = useState({ email: "" });
 
+  const updateEmail = (e) => {
+    e.preventDefault();
+    setCurrentUser({ email: e.target.value });
+};
+
   const onSignIn = (e, email) => {
     e.preventDefault()
     setCurrentUser({ email: email })
   }
+
+  const onSignOut = () => {
+    setCurrentUser({email: ""})
+  }
+
+
   return (
     <div className="main">
-      <Navbarr onSignIn={onSignIn} />
-      <Main />
+      <Navbarr  onSignOut={onSignOut} currentUser = {currentUser} onSignIn={onSignIn} />
+      <Main updateEmail={updateEmail} currentUser = {currentUser} />
     </div>
   );
 }
