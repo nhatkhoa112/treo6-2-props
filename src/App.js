@@ -185,7 +185,7 @@ const Friends = (props) => {
 const Photos = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-    <img src={props.currentUser.photos_url} style={{width:"150px"}} alt="photo" />
+    Photos: <img src={props.currentUser.photos_url} style={{width:"150px"}}  />
     </div>
   );
 }
