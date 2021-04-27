@@ -2,9 +2,14 @@
   height: 100vh;
 }
 
+.content{
+  height: 120vh!important;
+}
+
 .comment-bubble {
   padding: 1rem;
   overflow: hidden;
+  overflow-y: auto;
   border-radius: 1rem;
   display: inline-block;
 	-webkit-border-radius: 1rem;
@@ -124,4 +129,21 @@
 
 .post-card .comment-form{
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card .comment-form .list-group-flush.py-3.list-group 
+{
+  flex: 4 !important;
+  overflow: hidden !important;
+  overflow-y: auto !important;
+}
+
+.post-card .comment-form .form-inline {
+  flex: 1;
+}
+
+.toggle{
+  position: relative;
 }

@@ -19,6 +19,12 @@ import { COMMENTS } from './utils'
 
 import Modal from "react-modal";
 
+import { Toggle } from './components/Toggle';
+import { useDarkMode } from './styles/useDarkMode';
+import { GlobalStyles, lightTheme, darkTheme } from './styles/globalStyles';
+import styled, { ThemeProvider } from 'styled-components';
+
+
 
 const Avatar = (props) => {
   return (
@@ -100,7 +106,11 @@ const Comments = (props) => {
       </ListGroup>
     </Card.Body>
   );
+
+  
 };
+
+
 
 const Post = (props) => {
   const {currentUser} =  props;
@@ -121,7 +131,7 @@ const Post = (props) => {
       </div>
 
       <Card.Body className="comment-form">
-        <Comments comments={COMMENTS} />
+        <Comments  comments={COMMENTS} />
         <CommentForm currentUser={currentUser} />
       </Card.Body>
     </Card>
@@ -168,14 +178,14 @@ const Navbarr = (props) => {
 const Friends = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      {props.currentUser.friends}
+      Friends: {props.currentUser.friends}
     </div>
   );
 }
 const Photos = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      <img src={props.currentUser.photos_url} style={{width:"150px"}} alt="photo" />
+      Photos: <img src={props.currentUser.photos_url} style={{width:"150px"}} alt="photo" />
     </div>
   );
 }
@@ -183,7 +193,7 @@ const Photos = (props) => {
 const Hobbies = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      {props.currentUser.hobbies}
+      Hobbies: {props.currentUser.hobbies}
     </div>
   );
 };
@@ -278,7 +288,7 @@ const Main = (props) => {
           <PostForm posts={posts} setPosts={setPosts} currentUser={currentUser} />
         </Col>
       </Row>
-      <Row>
+      <Row className="content">
         <Left updateHobbies={updateHobbies} updatePhotos={updatePhotos} updateFriends={updateFriends} currentUser={currentUser} updateEmail={props.updateEmail} />
         <Right posts={posts} currentUser={currentUser}  />
       </Row>
@@ -326,12 +336,20 @@ function App() {
     setCurrentUser({...currentUser, email: ""})
   }
 
+  const [ theme, toggleTheme ] = useDarkMode();
+  const themeMode = theme === 'light' ? lightTheme : darkTheme;
 
   return (
-    <div className="main">
-      <Navbarr  onSignOut={onSignOut} currentUser = {currentUser} onSignIn={onSignIn} />
-      <Main updateHobbies={updateHobbies} updatePhotos={updatePhotos} updateFriends={updateFriends} updateEmail={updateEmail} currentUser = {currentUser} />
-    </div>
+    <ThemeProvider theme={themeMode}>
+      <GlobalStyles />
+      <div className="main">
+        <Navbarr  onSignOut={onSignOut} currentUser = {currentUser} onSignIn={onSignIn} />
+        <div className="toggle">
+          <Toggle theme={theme} toggleTheme={toggleTheme} />
+        </div>
+        <Main updateHobbies={updateHobbies} updatePhotos={updatePhotos} updateFriends={updateFriends} updateEmail={updateEmail} currentUser = {currentUser} />
+      </div>
+    </ThemeProvider>
   );
 }
 
