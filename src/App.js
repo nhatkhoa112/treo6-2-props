@@ -165,25 +165,25 @@ const Navbarr = (props) => {
 
 
 
-const Friends = () => {
+const Friends = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      Friends
+      {props.currentUser.friends}
     </div>
   );
 }
-const Photos = () => {
+const Photos = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      Photos
+      <img src={props.currentUser.photos_url} style={{width:"150px"}} alt="photo" />
     </div>
   );
 }
 
-const Hobbies = () => {
+const Hobbies = (props) => {
   return (
     <div className="d-flex flex-column h-25 border w-100 align-items-start justify-content-around pl-3 mb-3">
-      Hobbies
+      {props.currentUser.hobbies}
     </div>
   );
 };
@@ -214,12 +214,12 @@ const Left = (props) => {
   return (
     <Col className="d-flex flex-column align-items-center justify-content-center">
       <Intro openModal={openModal} />
-      <Hobbies />
-      <Photos />
-      <Friends />
+      <Hobbies currentUser={props.currentUser} />
+      <Photos currentUser={props.currentUser}/>
+      <Friends currentUser={props.currentUser} />
       <Modal
         isOpen={open}
-        // style={customStyles}
+        // style={customStyles} 
         onRequestClose={closeModal} 
         contentLabel="Example Modal"
       >
@@ -228,25 +228,25 @@ const Left = (props) => {
           <div className="email-detail">
             <form >
               <h4>Email</h4>
-              <input type="text" className="input" onChange={props.updateEmail} />
+              <input type="text" className="input"  value={props.currentUser.email} onChange={props.updateEmail} />
             </form>
           </div>  
           <div className="email-detail">
             <form >
               <h4>Hobbies</h4>
-              <textarea type="text" className="input"  />
+              <textarea type="text" className="input" value={props.currentUser.hobbies} onChange={props.updateHobbies} />
             </form>
           </div>  
           <div className="email-detail">
             <form >
               <h4>Photos_url</h4>
-              <input type="text" className="input"  />
+              <input type="text" className="input"  value={props.currentUser.photos_url} onChange={props.updatePhotos} />
             </form>
           </div>  
           <div className="email-detail">
           <form >
             <h4>Friends</h4>
-            <textarea type="text" className="input"  />
+            <textarea type="text" className="input"  value={props.currentUser.friends} onChange={props.updateFriends} />
           </form>
         </div>  
         <div className="d-flex justify-content-center">
@@ -268,7 +268,7 @@ const Right = ({posts, currentUser}) => {
 }
 
 const Main = (props) => {
-    const {currentUser} = props;
+    const {updateHobbies, updatePhotos, updateFriends, currentUser} = props;
     const [posts, setPosts] = useState([]);
     console.log(posts)
   return (
@@ -279,7 +279,7 @@ const Main = (props) => {
         </Col>
       </Row>
       <Row>
-        <Left currentUser={currentUser} updateEmail={props.updateEmail} />
+        <Left updateHobbies={updateHobbies} updatePhotos={updatePhotos} updateFriends={updateFriends} currentUser={currentUser} updateEmail={props.updateEmail} />
         <Right posts={posts} currentUser={currentUser}  />
       </Row>
     </Container>
@@ -287,27 +287,50 @@ const Main = (props) => {
 };
 
 function App() {
-  const [currentUser, setCurrentUser] = useState({ email: "" });
+  const [currentUser, setCurrentUser] = useState({ email: "",  
+                                                  hobbies: "", 
+                                                  photos_url: "", 
+                                                  friends: ""});
+
+  
 
   const updateEmail = (e) => {
     e.preventDefault();
-    setCurrentUser({ email: e.target.value });
+    setCurrentUser({...currentUser, email: e.target.value });
+};
+
+
+  const updateHobbies = (e) => {
+    e.preventDefault();
+    setCurrentUser({...currentUser, hobbies: e.target.value });
+};
+
+
+  const updatePhotos = (e) => {
+    e.preventDefault();
+    setCurrentUser({...currentUser, photos_url: e.target.value });
+};
+
+
+  const updateFriends = (e) => {
+    e.preventDefault();
+    setCurrentUser({...currentUser, friends: e.target.value });
 };
 
   const onSignIn = (e, email) => {
     e.preventDefault()
-    setCurrentUser({ email: email })
+    setCurrentUser({...currentUser,  email: email })
   }
 
   const onSignOut = () => {
-    setCurrentUser({email: ""})
+    setCurrentUser({...currentUser, email: ""})
   }
 
 
   return (
     <div className="main">
       <Navbarr  onSignOut={onSignOut} currentUser = {currentUser} onSignIn={onSignIn} />
-      <Main updateEmail={updateEmail} currentUser = {currentUser} />
+      <Main updateHobbies={updateHobbies} updatePhotos={updatePhotos} updateFriends={updateFriends} updateEmail={updateEmail} currentUser = {currentUser} />
     </div>
   );
 }
